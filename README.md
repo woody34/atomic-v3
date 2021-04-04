@@ -57,3 +57,9 @@ Contributions are welcome! Please follow the [code of conduct](https://www.contr
 ---
 
 [Follow @uninen](https://twitter.com/uninen) on Twitter
+
+## Goal
+
+- [ ] Introduce Jesus to Vue
+- [ ] Create Table identical to [vuetify's](https://vuetifyjs.com/en/components/data-tables/) data table using Vue 3 composition API
+- [ ] Use tailwind CSS
