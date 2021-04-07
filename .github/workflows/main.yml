@@ -13,20 +13,20 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      ## Yarn dir
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+      ## NPM dir
+      - name: Get npm cache directory path
+        id: npm-cache-dir-path
+        run: echo "::set-output name=dir::$(npm config get cache)"
 
       ## Cache
-      - name: Cache yarn cache
+      - name: Cache npm cache
         uses: actions/cache@v2
-        id: cache-yarn-cache2
+        id: cache-npm-cache2
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn2-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm2-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-yarn2-
+            ${{ runner.os }}-npm2-
 
       ## Cache
       - name: Cache node_modules
@@ -34,7 +34,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules2-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules2-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node-version }}-nodemodules2-
 
@@ -44,23 +44,23 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-${{ matrix.node-version }}-cypress2-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-cypress2-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node-version }}-cypress2-
 
       ## Dependencies
       - name: Install Dependencies
         if: |
-          steps.cache-yarn-cache.outputs.cache-hit != 'true' ||
+          steps.cache-npm-cache.outputs.cache-hit != 'true' ||
           steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: yarn --frozen-lockfile
+        run: npm ci
 
       ## Test
       - name: Start Vite devserver
-        run: yarn start
+        run: npm run start
 
       - name: Run tests
-        run: yarn test:ci
+        run: npm run test:ci
 
       - name: Upload artifacts on fail
         uses: actions/upload-artifact@v2
